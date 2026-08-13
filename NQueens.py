@@ -1,17 +1,32 @@
 class Solution:
-    def maxArea(self, height: List[int]) -> int:
-        left = 0
-        right = len(height) - 1
-        max_area = 0
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        result = []
+        board = [["."] * n for _ in range(n)]
 
-        while left < right:
-            width = right - left
-            area = min(height[left], height[right]) * width
-            max_area = max(max_area, area)
+        cols = set()
+        diag1 = set()  # row - col
+        diag2 = set()  # row + col
 
-            if height[left] < height[right]:
-                left += 1
-            else:
-                right -= 1
+        def backtrack(row):
+            if row == n:
+                result.append(["".join(r) for r in board])
+                return
 
-        return max_area
+            for col in range(n):
+                if col in cols or (row - col) in diag1 or (row + col) in diag2:
+                    continue
+
+                board[row][col] = "Q"
+                cols.add(col)
+                diag1.add(row - col)
+                diag2.add(row + col)
+
+                backtrack(row + 1)
+
+                board[row][col] = "."
+                cols.remove(col)
+                diag1.remove(row - col)
+                diag2.remove(row + col)
+
+        backtrack(0)
+        return result
